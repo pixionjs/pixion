@@ -461,16 +461,24 @@ PIXION.PL = function (scene) {
         } else {
             style.fill = style.fill || "#ffffff";
         }
-        this.txt = new PIXI.Text(str, style);
-        this.txt.anchor.x = this.txt.anchor.y = 0.5;
-        this.addChild(this.txt);
+        this.pixiText = new PIXI.Text(str, style);
+        this.pixiText.anchor.x = this.pixiText.anchor.y = 0.5;
+        this.addChild(this.pixiText);
     };
     this.Text.prototype = Object.create(PIXION.DispObj.prototype);
     this.Text.prototype.constructor = this.Text;
     this.Text.prototype.remove = function() {
-        this.removeChild(this.txt).destroy();
+        this.removeChild(this.pixiText).destroy();
         if (this.parent) this.parent.removeChild(this).destroy();
     }
+    Object.defineProperty(this.Text.prototype, "text", {
+            get: function () {
+                return this.pixiText.text;
+            },
+            set: function (val) {
+                this.pixiText.text = val;
+            }
+        });
 
     // ==================================================================
     // generate array of PIXI.Texture of each frames from image file
