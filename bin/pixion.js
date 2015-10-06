@@ -574,7 +574,7 @@ PIXION.PL = function (scene) {
     //
     // ==================================================================
     this.gotoScene = function (sceneName, opt) {
-//        console.log(typeof sceneName);
+        // load scene handler and init scene.
         if ( typeof sceneName == "object") { // in case of PIXION.Scene object
             if (sceneName instanceof PIXION.Scene)
                 var sceneToGo = sceneName;
@@ -612,7 +612,9 @@ PIXION.PL = function (scene) {
                 scene.destroy();
                 sceneToGo.container.x = 0;
                 sceneToGo.container.y = 0;
-                PIXION.log("slide complete")
+                sceneToGo.alpha = 1.0;
+                sceneToGo.rotation = 0;
+                // PIXION.log("slide complete")
             }
 
 //            PIXION.log("runAfterLoad:" + sceneName);

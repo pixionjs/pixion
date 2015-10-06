@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
     <head>
-        <!-- <script type="text/javascript" src="lib/pixi.js" charset="UTF-8"></script> -->
-        <!-- <script type="text/javascript" src="https://raw.githubusercontent.com/pixijs/pixi.js/master/bin/pixi.min.js" charset="UTF-8"></script> -->
         <script type="text/javascript" src="bin/pixion.js" charset="UTF-8"></script>
         <script type="text/javascript" src="config.js" charset="UTF-8"></script>
         <script type="text/javascript" src="main.js" charset="UTF-8"></script>
@@ -14,41 +12,50 @@
     <body>
         <script>
             PIXION.begin(600,800);
+            (new PIXION.Scene(function(po) {
+                  var txt = new po.Text("start scene");
+                  txt.text = "begin";
+                  txt.x = 300;
+                  txt.y = 400;
+                  po.eventFrame(function(){
+                    txt.rotation += 0.01;
+                  });
+            })).show();
             //(new PIXION.PL()).gotoScene('main');
 
-            var scene1 = new PIXION.Scene( function(po) {
-                var img1 = new po.Image('images/rect.png');
-                img1.x = 300;
-                img1.y = 400;
-                new po.Timer(2000, function() {
-                   po.gotoScene("main", {effect: "slideRight", time: 500});
-                    // po.gotoScene(mainScene, {effect: "slideRight", time: 500});
-                });
-            });
-
-            var mainScene = new PIXION.Scene( function(po) {
-                var img1 = new po.Image('images/ch1.png');
-                img1.x = 300;
-                img1.y = 100;
-                img1.moveTo({time:500, y:600, scale:0.5, delay:1000});
-                var txt = new po.Text("start scene");
-                txt.text = "begin";
-                txt.x = 300;
-                txt.y=400;
-                txt.moveTo({time:300, delay:500, scale:4});
-                new po.Timer(400, function(event){
-                  if (event.count %2 == 0) {
-                    txt.text = "THIS IS";
-                  } else {
-                    txt.text = "PIXION!!";
-                  }
-                },0);
-
-                new po.Timer(4000, function() {
-                    po.gotoScene(scene1, {effect: "slideRight", time: 500});
-                });
-            });
-            mainScene.show();
+            // var scene1 = new PIXION.Scene( function(po) {
+            //     var img1 = new po.Image('images/rect.png');
+            //     img1.x = 300;
+            //     img1.y = 400;
+            //     new po.Timer(2000, function() {
+            //        po.gotoScene("main", {effect: "slideRight", time: 500});
+            //         // po.gotoScene(mainScene, {effect: "slideRight", time: 500});
+            //     });
+            // });
+            //
+            // var mainScene = new PIXION.Scene( function(po) {
+            //     var img1 = new po.Image('images/ch1.png');
+            //     img1.x = 300;
+            //     img1.y = 100;
+            //     img1.moveTo({time:500, y:600, scale:0.5, delay:1000});
+            //     var txt = new po.Text("start scene");
+            //     txt.text = "begin";
+            //     txt.x = 300;
+            //     txt.y=400;
+            //     txt.moveTo({time:300, delay:500, scale:4});
+            //     new po.Timer(400, function(event){
+            //       if (event.count %2 == 0) {
+            //         txt.text = "THIS IS";
+            //       } else {
+            //         txt.text = "PIXION!!";
+            //       }
+            //     },0);
+            //
+            //     new po.Timer(4000, function() {
+            //         po.gotoScene(scene1, {effect: "slideRight", time: 500});
+            //     });
+            // });
+            // mainScene.show();
 //            scene1.show();
 
 
