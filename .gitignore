@@ -1,1 +1,2 @@
-exec/
+#ignore node modules
+exec/node_modules/

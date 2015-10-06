@@ -11,6 +11,7 @@
     </head>
     <body>
         <script>
+        //
             PIXION.begin(600,800);
             (new PIXION.Scene(function(po) {
                   var txt = new po.Text("start scene");
@@ -18,7 +19,7 @@
                   txt.x = 300;
                   txt.y = 400;
                   po.eventFrame(function(){
-                    txt.rotation += 0.01;
+                    txt.rotation += 0.02;
                   });
             })).show();
             //(new PIXION.PL()).gotoScene('main');
