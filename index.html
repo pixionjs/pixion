@@ -18,9 +18,10 @@
                   txt.text = "begin";
                   txt.x = 300;
                   txt.y = 400;
-                  po.eventFrame(function(){
-                    txt.rotation += 0.02;
-                  });
+                  // po.eventFrame(function(){
+                  //   txt.rotation += 0.02;
+                  // });
+                  txt.moveTo({time:300, scaleX:20, alpha:0});
             })).show();
             //(new PIXION.PL()).gotoScene('main');
 

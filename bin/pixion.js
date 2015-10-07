@@ -247,15 +247,20 @@ PIXION.DispObj.prototype.moveTo = function (params) {
     if (params == undefined)
         PIXION.stop("No params in pl.moveTo() function call");
     var step = params.time / PIXION.env.frameTime;
-    var dx = 0, dy = 0, dxScale = 0, dyScale = 0, dalpha = 0;
-    if (params.x) dx = (params.x - this.x) / step;
-    if (params.y) dy = (params.y - this.y) / step;
-    if (params.alpha) {
-        var dalpha = (params.alpha - this.alpha) / step;
+    var dx = 0, dy = 0;
+    var dScaleX = 0, dScaleY = 0
+    var dalpha = 0;
+    if (params.x != undefined) dx = (params.x - this.x) / step;
+    if (params.y != undefined) dy = (params.y - this.y) / step;
+    if (params.alpha != undefined) {
+        dalpha = (params.alpha - this.alpha) / step;
     }
-    if (params.scale) {
-        var dxScale = (params.scale - this.scale.x) / step;
-        var dyScale = (params.scale - this.scale.y) / step;
+    if (params.scale != undefined) {
+        var dScaleX = (params.scale - this.scale.x) / step;
+        var dScaleY = (params.scale - this.scale.y) / step;
+    } else if (params.scaleX != undefined || params.scaleY != undefined) {
+      dScaleX = (params.scaleX == undefined)? 0:(params.scaleX - this.scale.x) / step;
+      dScaleY = (params.scaleY == undefined)? 0:(params.scaleY - this.scale.y) / step;
     }
     var thisDO = this;
     function doMove() {
@@ -265,8 +270,8 @@ PIXION.DispObj.prototype.moveTo = function (params) {
                 thisDO.x += dx;
                 thisDO.y += dy;
                 thisDO.alpha += dalpha;
-                thisDO.scale.x += dxScale;
-                thisDO.scale.y += dyScale;
+                thisDO.scale.x += dScaleX;
+                thisDO.scale.y += dScaleY;
                 return function () { //onComplete
                     if (params.x) thisDO.x = params.x;
                     if (params.y) thisDO.y = params.y;
