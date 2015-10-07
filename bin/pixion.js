@@ -247,11 +247,12 @@ PIXION.DispObj.prototype.moveTo = function (params) {
     if (params == undefined)
         PIXION.stop("No params in pl.moveTo() function call");
     var step = params.time / PIXION.env.frameTime;
-    var dx = 0, dy = 0;
+    var dx = 0, dy = 0, dr = 0;
     var dScaleX = 0, dScaleY = 0
     var dalpha = 0;
     if (params.x != undefined) dx = (params.x - this.x) / step;
     if (params.y != undefined) dy = (params.y - this.y) / step;
+    if (params.rotation != undefined) dr = (params.rotation - this.rotation) / step;
     if (params.alpha != undefined) {
         dalpha = (params.alpha - this.alpha) / step;
     }
@@ -269,16 +270,21 @@ PIXION.DispObj.prototype.moveTo = function (params) {
             function() {
                 thisDO.x += dx;
                 thisDO.y += dy;
+                thisDO.rotation += dr;
                 thisDO.alpha += dalpha;
                 thisDO.scale.x += dScaleX;
                 thisDO.scale.y += dScaleY;
                 return function () { //onComplete
-                    if (params.x) thisDO.x = params.x;
-                    if (params.y) thisDO.y = params.y;
-                    if (params.alpha) thisDO.alpha = params.alpha;
-                    if (params.scale) {
+                    if (params.x != undefined) thisDO.x = params.x;
+                    if (params.y != undefined) thisDO.y = params.y;
+                    if (params.rotation != undefined) thisDO.rotation = params.rotation;
+                    if (params.alpha  != undefined) thisDO.alpha = params.alpha;
+                    if (params.scale  != undefined) {
                         thisDO.scale.x = params.scale;
                         thisDO.scale.y = params.scale;
+                    }  else if (params.scaleX != undefined || params.scaleY != undefined) {
+                      if (params.scaleX != undefined) thisDO.scale.x = params.scaleX;
+                      if (params.scaleY != undefined) thisDO.scale.y = params.scaleY;
                     }
                     if (params.onComplete) params.onComplete();
     //                console.log("moving end");
