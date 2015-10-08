@@ -15,7 +15,7 @@
         tt.y = 100;
 
     tt.moveTo({time:500,y:700,scale:0.5,delay:800});
-    ani1.moveTo({time:500,y:100,scale:0.5,delay:800});
+    ani1.moveTo({time:500,y:100,scale:0.1,delay:800});
 
 //        po.eventFrame(function() {
 //            console.log("arrTmr:["+po.scene._arrTmrId+"]");
