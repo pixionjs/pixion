@@ -42,7 +42,7 @@ PIXI.DisplayObject.prototype.setScale = function(val) {
     this.scale.x = this.scale.y = val;
 };
 //
-PIXI.DisplayObject.prototype.eventMouse = function(handler) {
+PIXI.DisplayObject.prototype.mouse = function(handler) {
         this.interactive = true; //enable mouse/touch control input
         var isMouseOn = false;
         var isLeftDown = false;
@@ -676,12 +676,12 @@ PIXION.Scene = function (execFunc) {
 //    this.__objectName = "PIXION.Scene";
     this.execFunc = execFunc;
     this.po = new PIXION.PL(this);
-    this.init();
+    this._init();
 };//PIXION.Scene() object
 
 PIXION.Scene.prototype = {
     //
-    init() {
+    _init() {
         //---------------------------------------------------------------
         // create and add layers to the scene container
         this.container = new PIXI.Container();
@@ -697,6 +697,7 @@ PIXION.Scene.prototype = {
     show: function() {
         this.exports = this.execFunc(this.po);
         PIXION.env.stage.addChild(this.container);
+        return this;
     },
     //
 //    registerAndRun: function() {
