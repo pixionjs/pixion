@@ -1,39 +1,59 @@
 <!DOCTYPE html>
 <html lang="ko">
     <head>
-        <script type="text/javascript" src="bin/pixion.js" charset="UTF-8"></script>
-        <script type="text/javascript" src="config.js" charset="UTF-8"></script>
-        <script type="text/javascript" src="main.js" charset="UTF-8"></script>
-        <!-- user files included -->
-        <script type="text/javascript" src="scene1.js" charset="UTF-8"></script>
-        <!-- <script type="text/javascript" src="scene2.js" charset="UTF-8"></script> -->
-        <!-- <script type="text/javascript" src="userlib1.js" charset="UTF-8"></script> -->
+      <meta charset="UTF-8">
+      <script type="text/javascript" src="bin/pixion.js" charset="UTF-8"></script>
+      <script type="text/javascript" src="config.js" charset="UTF-8"></script>
+      <script type="text/javascript" src="main.js" charset="UTF-8"></script>
+      <!-- user files included -->
+      <script type="text/javascript" src="scene1.js" charset="UTF-8"></script>
+      <!-- <script type="text/javascript" src="scene2.js" charset="UTF-8"></script> -->
+      <!-- <script type="text/javascript" src="userlib1.js" charset="UTF-8"></script> -->
     </head>
     <body>
         <script>
         //
             PIXION.begin(600,800);
-            var sceneMain = (new PIXION.Scene(function(po) {
-                  var txt = new po.Text("start scene");
-                  txt.text = "begin";
-                  txt.x = 300;
-                  txt.y = 400;
-                  // po.eventFrame(function(){
-                  //   txt.rotation += 0.02;
-                  // });
-                  txt.moveTo({time:2000, scale:10, rotation:3.14});
+
+            var scene1 = new PIXION.Scene( function(po) {
+                var img1 = new po.Image('images/rect.png');
+                img1.x = 300;
+                img1.y = 400;
+                new po.Timer(2000, function() {
+                   po.changeTo(sceneMain, {effect: "slideLeft", time: 500});
+                    // po.gotoScene(mainScene, {effect: "slideRight", time: 500});
+                });
+            });
+
+            var sceneMain = (new PIXION.Scene(function(scene) {
+              var img1 = new scene.Image("images/ch1.png");
+              img1.x = 300;
+              img1.y=400;
+              scene.onMouse(function(event){
+                // console.log(event);
+                if (event.action == "moved" && event.isLeftDown) {
+                  img1.x += event.dx;
+                  img1.y += event.dy;
+                }
+              });
+             var sheet1 = new scene.ImageSheet("images/cat.png",
+                                            {width: 512, height: 256, numFrames: 8});
+             var ani1 = new scene.Sprite(sheet1, {time:1000, layer:2});
+                 ani1.x = 300;
+                 ani1.y = 400;
+
+            var txt = new scene.Text("SCENE 1");
+            txt.x = 300;
+            txt.y = 100;
+
+            new scene.Timer(2000, function() {
+               scene.changeTo(scene1, {effect: "slideRight", time: 500});
+                // po.gotoScene(mainScene, {effect: "slideRight", time: 500});
+            });
+
             })).show();
             //(new PIXION.PL()).gotoScene('main');
 
-            // var scene1 = new PIXION.Scene( function(po) {
-            //     var img1 = new po.Image('images/rect.png');
-            //     img1.x = 300;
-            //     img1.y = 400;
-            //     new po.Timer(2000, function() {
-            //        po.gotoScene("main", {effect: "slideRight", time: 500});
-            //         // po.gotoScene(mainScene, {effect: "slideRight", time: 500});
-            //     });
-            // });
             //
             // var mainScene = new PIXION.Scene( function(po) {
             //     var img1 = new po.Image('images/ch1.png');

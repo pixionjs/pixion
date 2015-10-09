@@ -42,7 +42,7 @@ PIXI.DisplayObject.prototype.setScale = function(val) {
     this.scale.x = this.scale.y = val;
 };
 //
-PIXI.DisplayObject.prototype.mouse = function(handler) {
+PIXI.DisplayObject.prototype.onMouse = function(handler) {
         this.interactive = true; //enable mouse/touch control input
         var isMouseOn = false;
         var isLeftDown = false;
@@ -116,11 +116,11 @@ var PIXION = {
     //
     // check if layer is winthin the bound.
     _layerCheck: function (layer) {
-        layerRet = layer || 0;
-        if (layerRet >= PIXION.env.layerDepth) {
+        if (layer == undefined) return 0;
+        if (layer >= PIXION.env.layerDepth) {
             PIXION.stop("layer is out of bound");
         }
-        return layerRet;
+        return layer;
     },
     //
     // determine layer inside the object : params = {layer:n,...}
@@ -172,11 +172,11 @@ var PIXION = {
 //========================================================================
 // Group inherits PIXI.Sprite and is a parent object for Image/Sprite/Text
 //
-PIXION.DispObj = function (scene, params, po) {
+PIXION.DispObj = function (scene, params) {
     PIXI.Sprite.call(this);
     this.scene = scene;
-    this.po = po;
-//    this.name = undefined; // name of this object
+    // this.po = po;
+    // this.name = undefined; // name of this object
     this.__layer__ = PIXION._layerFromParams(params);
     this.__cntnr__ = scene.container;    // store scene.container object
     this.anchor.x = this.anchor.y = 0.5; //default anchor : CENTER
@@ -342,35 +342,171 @@ PIXION.begin = function(width, height, params) {
     }
 };
 //
+PIXION.beginWithConfig = function() {
+};
+
 // ==================================================================
 // object that delivers to scene file wrapping function
 //
 // ==================================================================
-PIXION.PL = function (scene) {
-    var thisPL = this;
-    this.scene = scene;
-    //
-    this.log = function (str) {
-        PIXION.log(str);
-    };
-    //
-    //==============================================================
-    // pl.require : library loader
-    //
-    //==============================================================
-    this.require = function(fileName) {
-        var functionName = fileName + PIXION.__fileSuffix__;
-        PIXION.log("pl.require:[" + functionName + "]");
-        return window[functionName](this);
-    };
+// PIXION.PL = function (scene) {
+//     var thisPL = this;
+//     this.scene = scene;
+//     //
+//     this.log = function (str) {
+//         PIXION.log(str);
+//     };
+//     //
+//     //==============================================================
+//     // pl.require : library loader
+//     //
+//     //==============================================================
+//     this.require = function(fileName) {
+//         var functionName = fileName + PIXION.__fileSuffix__;
+//         PIXION.log("pl.require:[" + functionName + "]");
+//         return window[functionName](this);
+//     };
 
+    // ==================================================================
+    // stage.goto()
+    // opt:
     //
+    // ==================================================================
+//     this.gotoScene = function (sceneName, opt) {
+//         // load scene handler and init scene.
+//         if ( typeof sceneName == "object") { // in case of PIXION.Scene object
+//             if (sceneName instanceof PIXION.Scene)
+//                 var sceneToGo = sceneName;
+//             else
+//                 PIXION.stop(sceneName + " is not a PIXION.Scene object");
+//         } else if (typeof sceneName == "string") {//in case of file name
+// //            console.log("scene file");
+//             var sceneToGo = new PIXION.Scene(PIXION.userFiles[sceneName]);
+//         }
+//         sceneToGo.init();
+//         //var sceneToGo = new PIXION.Scene(sceneName);
+//         //var po = new PIXION.PL(sceneToGo);
+//
+// //        // if no scene preloads, load all the resources in the project
+// //        if (PIXION._isEmpty(sceneToGo.preloads)) {
+// //            if (!PIXION.env.isAllRscLoadedBefore) {
+// //                PIXION.log('load all the rscs' + PIXION.env.allTheResources);
+// //                PIXION._addToLoader(PIXION.env.allTheResources).load(runAfterLoad);
+// //                PIXION.env.isAllRscLoadedBefore = true;
+// //            } else {
+// //                PIXION.log('All the resources has been loaded before.')
+// //                runAfterLoad();
+// //            }
+// //        } else {
+// //            PIXION.log('load scene rscs');
+// //            PIXION._addToLoader(sceneToGo.preloads).load(runAfterLoad);
+// //        }
+//
+//         runAfterLoad();
+//
+//         function runAfterLoad() {
+//
+//             function onCompleteSceneTransition() {
+// //                PIXION.env.stage.removeChild(scene);
+//                 scene.destroy();
+//                 sceneToGo.container.x = 0;
+//                 sceneToGo.container.y = 0;
+//                 sceneToGo.alpha = 1.0;
+//                 sceneToGo.rotation = 0;
+//                 // PIXION.log("slide complete")
+//             }
+//
+// //            PIXION.log("runAfterLoad:" + sceneName);
+//             var prevScene = scene;
+//
+//             sceneToGo.show();// sceneToGo.registerAndRun();
+//
+//             if (opt == undefined) {
+//                 if (prevScene != undefined)
+//                     prevScene.destroy();
+//                 //PIXION.log("slide changed");
+//                 return;
+//
+//             } else {
+//                 if (opt.effect == "slideLeft") {
+//                     sceneToGo.container.x = PIXION.env.width;
+//
+//                     var totalIter = opt.time / PIXION.env.frameTime;
+//                     var step = PIXION.env.width / totalIter;
+//
+//                     //PIXION.newTimer(PIXION.env.frameTime, function () {
+//                     new thisPL.Timer(PIXION.env.frameTime, function () {
+//                         sceneToGo.container.x -= step;
+//                         prevScene.container.x -= step;//current scene
+//                         return onCompleteSceneTransition;
+//                     }, totalIter);
+//                 } else if (opt.effect == "slideRight") {
+//                     sceneToGo.container.x = -PIXION.env.width;
+//                     var totalIter = opt.time / PIXION.env.frameTime;
+//                     var step = PIXION.env.width / totalIter;
+//                     new thisPL.Timer(PIXION.env.frameTime, function () {
+//                         sceneToGo.container.x += step;
+//                         prevScene.container.x += step;
+//                         return onCompleteSceneTransition;
+//                     }, totalIter);
+//
+//                 }
+//             }
+//         } // function runAfterLoad()
+//     };
+//};
+// //
+// ==================================================================
+// opt = {width:N, height:M, time:ms, numFrames=nf,}
+//
+// ==================================================================
+PIXION.Scene = function (execFunc) {
+    this.execFunc = execFunc;
+    this._init();
+    var scene = this;
+    // ==================================================================
+    // Image object inherits PIXI.Sprite object.
+    // layer: layer number to add the generated image
+    // ==================================================================
+    this.Image = function (filename, params) {
+        PIXION.DispObj.call(this, scene, params);
+        // callback function called after image file has been loaded.
+        var image = this;
+        PIXION._callBackAfterImageFileIsLoaded(filename, function() {
+            image.texture = PIXI.Texture.fromImage(filename, false);
+        });
+    };
+    this.Image.prototype = Object.create(PIXION.DispObj.prototype);
+    this.Image.prototype.constructor = this.Image;
+    // -----------------------------------------------------------------
+    // create image from image sheet
+    // -----------------------------------------------------------------
+    this.Image.fromImageSheet = function (imageSheet, frame, params) {
+        var image = new PIXION.DispObj(scene, params, thisPL);
+        // call createSprite() after imageSheet loaded fully.
+        PIXION._callBackAfterImageFramesAreStored(imageSheet, function(){
+            image.texture = imageSheet[frame];
+        });
+        return image;
+    };
+    //==============================================================
+    // register mouse event
+    //==============================================================
+    this.onMouse = function(handler) {
+        scene.container.onMouse(handler);
+    };
+    //==============================================================
+    // register frame event
+    //==============================================================
+    this.onFrame = function (handler) {
+        new this.Timer(PIXION.env.frameTime, handler, -1);
+    };
     //==============================================================
     // pl.Group : container for display objects.
     //
     //==============================================================
     this.Group = function(params) {
-        PIXION.DispObj.call(this, scene, params, po);
+        PIXION.DispObj.call(this, scene, params);
     }
     this.Group.prototype = Object.create(PIXION.DispObj.prototype);
     this.Group.prototype.constructor = this.Group;
@@ -401,7 +537,7 @@ PIXION.PL = function (scene) {
                 //if timer events are all completed, clear timer and run finisher.
                 if (iterCount >= iter) { // must be >= e.g., 60>=59.99999
 //                    clearInterval(thisTmr.id);
-                    scene.clearTimer(thisTmr.id);
+                    scene._clearTimer(thisTmr.id);
                     if (onComplete) onComplete();
                 }
             }, delay);
@@ -419,54 +555,15 @@ PIXION.PL = function (scene) {
             this.isPaused = false;
         },
         remove: function () {
-            scene.clearTimer(this.id);
+            scene._clearTimer(this.id);
         },
     };
-    //
-    //
-    this.eventFrame = function (handler) {
-        new this.Timer(PIXION.env.frameTime, handler, -1);
-    };
-    //
-    this.eventMouse = function(handler) {
-        scene.container.eventMouse(handler);
-    };
     // ==================================================================
     // Image object inherits PIXI.Sprite object.
     // layer: layer number to add the generated image
-    //
-    // ==================================================================
-    this.Image = function (filename, params) {
-        PIXION.DispObj.call(this, scene, params, thisPL);
-        // callback function called after image file has been loaded.
-        var thisImage = this;
-        PIXION._callBackAfterImageFileIsLoaded(filename, function() {
-            thisImage.texture = PIXI.Texture.fromImage(filename, false);
-        });
-    };
-    this.Image.prototype = Object.create(PIXION.DispObj.prototype);
-    this.Image.prototype.constructor = this.Image;
-    //
-    // create image from image sheet
-    //
-    this.Image.fromImageSheet = function (imageSheet, frame, params) {
-        var image = new PIXION.DispObj(scene, params, thisPL);
-        // call createSprite() after imageSheet loaded fully.
-        PIXION._callBackAfterImageFramesAreStored(imageSheet, function(){
-            image.texture = imageSheet[frame];
-        });
-        return image;
-    };
-    //
-    // ==================================================================
-    // Image object inherits PIXI.Sprite object.
-    // layer: layer number to add the generated image
-    //
     // ==================================================================
     this.Text = function (str, style) {
-        PIXION.DispObj.call(this, scene, style, thisPL);
-//        console.log("po.text");
-//        PIXION.DispObj.call(this, scene, style, thisPL);
+        PIXION.DispObj.call(this, scene, style);
         if (style == undefined) {
             style = {fill: "#ffffff"};
         } else {
@@ -481,7 +578,7 @@ PIXION.PL = function (scene) {
     this.Text.prototype.remove = function() {
         this.removeChild(this.pixiText).destroy();
         if (this.parent) this.parent.removeChild(this).destroy();
-    }
+    };
     Object.defineProperty(this.Text.prototype, "text", {
             get: function () {
                 return this.pixiText.text;
@@ -489,8 +586,7 @@ PIXION.PL = function (scene) {
             set: function (val) {
                 this.pixiText.text = val;
             }
-        });
-
+    });
     // ==================================================================
     // generate array of PIXI.Texture of each frames from image file
     // opt={width:n, height:n[, numFrames:n]}
@@ -527,7 +623,7 @@ PIXION.PL = function (scene) {
     // Sprite has just a indexs of textures in imageSheet.
     // ==================================================================
     this.Sprite = function (imageSheet, seq) {
-        PIXION.DispObj.call(this, scene, seq, thisPL);
+        PIXION.DispObj.call(this, scene, seq);
         this._imgSht = imageSheet;
         this._frameSeq = [];
         this.isLoadComplete = false;
@@ -555,15 +651,14 @@ PIXION.PL = function (scene) {
         this.isPlaying = false;
         return this;
     }
-    // sprite.play()
-    var playCount = 0;
+    // sprite.play() var playCount = 0;
     this.Sprite.prototype.play = function (playTime) {
 //        PIXION.log("ani.sprite.play()");
         this.isPlaying = true;
         var numFrames =  this._frameSeq.length;
         var thisSprite = this; //Sprite object (PIXI.Container)
         var idFS = 0; // index of this._frameSeq array
-        new thisPL.Timer(this._timeInterval, function () {
+        new scene.Timer(this._timeInterval, function () {
             if (!thisSprite.isPlaying) { // in case of paused.
                 return;
             }
@@ -573,18 +668,13 @@ PIXION.PL = function (scene) {
             }
             thisSprite.texture = thisSprite._imgSht[thisSprite._frameSeq[idFS]];
             idFS = (idFS == numFrames-1)? 0:(idFS+1);
-//            PIXION.log("frameShow:" + frameShow);
         }, 0);
-
         return this;
     };
+    //==========================================================================
     //
-    // ==================================================================
-    // stage.goto()
-    // opt:
-    //
-    // ==================================================================
-    this.gotoScene = function (sceneName, opt) {
+
+     this.changeTo = function (sceneName, opt) {
         // load scene handler and init scene.
         if ( typeof sceneName == "object") { // in case of PIXION.Scene object
             if (sceneName instanceof PIXION.Scene)
@@ -595,7 +685,7 @@ PIXION.PL = function (scene) {
 //            console.log("scene file");
             var sceneToGo = new PIXION.Scene(PIXION.userFiles[sceneName]);
         }
-        sceneToGo.init();
+        sceneToGo._init();
         //var sceneToGo = new PIXION.Scene(sceneName);
         //var po = new PIXION.PL(sceneToGo);
 
@@ -613,9 +703,8 @@ PIXION.PL = function (scene) {
 //            PIXION.log('load scene rscs');
 //            PIXION._addToLoader(sceneToGo.preloads).load(runAfterLoad);
 //        }
-
+//
         runAfterLoad();
-
         function runAfterLoad() {
 
             function onCompleteSceneTransition() {
@@ -627,7 +716,7 @@ PIXION.PL = function (scene) {
                 sceneToGo.rotation = 0;
                 // PIXION.log("slide complete")
             }
-
+//
 //            PIXION.log("runAfterLoad:" + sceneName);
             var prevScene = scene;
 
@@ -642,46 +731,35 @@ PIXION.PL = function (scene) {
             } else {
                 if (opt.effect == "slideLeft") {
                     sceneToGo.container.x = PIXION.env.width;
-
                     var totalIter = opt.time / PIXION.env.frameTime;
                     var step = PIXION.env.width / totalIter;
 
-                    //PIXION.newTimer(PIXION.env.frameTime, function () {
-                    new thisPL.Timer(PIXION.env.frameTime, function () {
+                    new scene.Timer(PIXION.env.frameTime, function () {
                         sceneToGo.container.x -= step;
                         prevScene.container.x -= step;//current scene
                         return onCompleteSceneTransition;
                     }, totalIter);
-                } else if (opt.effect == "slideRight") {
-                    sceneToGo.container.x = -PIXION.env.width;
-                    var totalIter = opt.time / PIXION.env.frameTime;
-                    var step = PIXION.env.width / totalIter;
-                    new thisPL.Timer(PIXION.env.frameTime, function () {
-                        sceneToGo.container.x += step;
-                        prevScene.container.x += step;
-                        return onCompleteSceneTransition;
-                    }, totalIter);
-
                 }
-            }
-        } // function runAfterLoad()
-    };
-};
-//
-// ==================================================================
-// opt = {width:N, height:M, time:ms, numFrames=nf,}
-//
-// ==================================================================
-PIXION.Scene = function (execFunc) {
-//    this.__objectName = "PIXION.Scene";
-    this.execFunc = execFunc;
-    this.po = new PIXION.PL(this);
-    this._init();
-};//PIXION.Scene() object
+                   else if (opt.effect == "slideRight") {
+                        sceneToGo.container.x = -PIXION.env.width;
+                        var totalIter = opt.time / PIXION.env.frameTime;
+                        var step = PIXION.env.width / totalIter;
+                        new scene.Timer(PIXION.env.frameTime, function () {
+                            sceneToGo.container.x += step;
+                            prevScene.container.x += step;
+                            return onCompleteSceneTransition;
+                        }, totalIter);
 
+                    }
+              }
+         };// function runAfterLoad()
+   };// changeTo()
+// //
+};//PIXION.Scene() object
+//
 PIXION.Scene.prototype = {
     //
-    _init() {
+    _init: function() {
         //---------------------------------------------------------------
         // create and add layers to the scene container
         this.container = new PIXI.Container();
@@ -692,25 +770,23 @@ PIXION.Scene.prototype = {
         this.container.hitArea = new PIXI.Rectangle(0,0,PIXION.env.width,PIXION.env.height);
         //---------------------------------------------------------------
         this._arrTmrId = [];
+        return this;
     },
     //
     show: function() {
-        this.exports = this.execFunc(this.po);
+        this.exports = this.execFunc(this);
         PIXION.env.stage.addChild(this.container);
         return this;
     },
     //
-//    registerAndRun: function() {
-//        //this.imports = this.po.require(this.name); // run the 'name.js' file
-//        this.execFunc(this.po);
-//    },
     // clear specified timer
-    clearTimer: function (idTimer) {
+    _clearTimer: function (idTimer) {
         var id = this._arrTmrId.indexOf(idTimer);
         if (id!=-1) {
             clearInterval(this._arrTmrId[id]);
             this._arrTmrId.splice(id, 1);
         }
+        return this;
     },
     //
     destroy: function () {
@@ -733,5 +809,5 @@ PIXION.Scene.prototype = {
             this.container.removeChild(layer).destroy();
         }
         PIXION.env.stage.removeChild(this.container).destroy();
-    }
+    },
 };
