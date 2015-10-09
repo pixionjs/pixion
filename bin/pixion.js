@@ -465,6 +465,53 @@ PIXION.Scene = function (execFunc) {
     this._init();
     var scene = this;
     // ==================================================================
+    // iter default is 1. Pass 0 or -1 for infinite loop
+    // hadler can return the function called when timer terminates.
+    // ==================================================================
+    this.Timer = function (delay, handler, iter) {
+        // default value of iter is 1 // if (iter == undefined) iter = 1;
+        iter = (iter == undefined)? 1:iter;
+        var iterCount = 0;
+        this.isPaused = false;
+        var thisTmr = this;
+        if (iter <= 0) { // infinite loop
+            this.id = setInterval(function () {
+                if (thisTmr.isPaused) return;
+                iterCount++;
+                //var event = {count: iterCount}; handler(event);
+                handler(iterCount);
+            }, delay);
+        } else { // finite number of loop
+            this.id = setInterval(function () {
+                if (thisTmr.isPaused) return;
+                iterCount++;
+                // var event = {count: iterCount}; var onComplete = handler(event);
+                var onComplete = handler(iterCount);
+                //if timer events are all completed, clear timer and run finisher.
+                if (iterCount >= iter) { // must be >= e.g., 60>=59.99999
+//                    clearInterval(thisTmr.id);
+                    scene._clearTimer(thisTmr.id);
+                    if (onComplete) onComplete();
+                }
+            }, delay);
+        }
+//        scene.timerIds[String(this.idTimer)/**/] = true;//register timer id
+        scene._arrTmrId.push(this.id);
+        console.log("tmr("+this.id+"):"+iter);
+        return this.id;
+    };
+    this.Timer.prototype = {// public members of Timer object
+        pause: function () {
+            this.isPaused = true;
+        },
+        resume: function () {
+            this.isPaused = false;
+        },
+        remove: function () {
+            scene._clearTimer(this.id);
+        },
+    };
+    // ==================================================================
     // Image object inherits PIXI.Sprite object.
     // layer: layer number to add the generated image
     // ==================================================================
@@ -511,53 +558,6 @@ PIXION.Scene = function (execFunc) {
     this.Group.prototype = Object.create(PIXION.DispObj.prototype);
     this.Group.prototype.constructor = this.Group;
     //
-    // ==================================================================
-    // iter default is 1. Pass 0 or -1 for infinite loop
-    // hadler can return the function called when timer terminates.
-    // ==================================================================
-    this.Timer = function (delay, handler, iter) {
-        // default value of iter is 1 // if (iter == undefined) iter = 1;
-        iter = (iter == undefined)? 1:iter;
-        var iterCount = 0;
-        this.isPaused = false;
-        var thisTmr = this;
-        if (iter <= 0) { // infinite loop
-            this.id = setInterval(function () {
-                if (thisTmr.isPaused) return;
-                iterCount++;
-                var event = {count: iterCount};
-                handler(event);
-            }, delay);
-        } else { // finite number of loop
-            this.id = setInterval(function () {
-                if (thisTmr.isPaused) return;
-                iterCount++;
-                var event = {count: iterCount};
-                var onComplete = handler(event);
-                //if timer events are all completed, clear timer and run finisher.
-                if (iterCount >= iter) { // must be >= e.g., 60>=59.99999
-//                    clearInterval(thisTmr.id);
-                    scene._clearTimer(thisTmr.id);
-                    if (onComplete) onComplete();
-                }
-            }, delay);
-        }
-//        scene.timerIds[String(this.idTimer)/**/] = true;//register timer id
-        scene._arrTmrId.push(this.id);
-        console.log("tmr("+this.id+"):"+iter);
-        return this.id;
-    };
-    this.Timer.prototype = {// public members of Timer object
-        pause: function () {
-            this.isPaused = true;
-        },
-        resume: function () {
-            this.isPaused = false;
-        },
-        remove: function () {
-            scene._clearTimer(this.id);
-        },
-    };
     // ==================================================================
     // Image object inherits PIXI.Sprite object.
     // layer: layer number to add the generated image

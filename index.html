@@ -48,6 +48,10 @@
             txt.x = 300;
             txt.y = 100;
 
+            scene.onFrame(function(cnt) {
+              console.log("frame:"+cnt);
+            });
+
             new scene.Timer(2000, function() {
                scene.changeTo(scene1, {time:500, effect:"slideDown"});
                 // po.gotoScene(mainScene, {effect: "slideRight", time: 500});
