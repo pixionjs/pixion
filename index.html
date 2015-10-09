@@ -20,7 +20,7 @@
                 img1.x = 300;
                 img1.y = 400;
                 new po.Timer(2000, function() {
-                   po.changeTo(sceneMain, {effect: "slideLeft", time: 500});
+                   po.changeTo(sceneMain, {effect: "slideUp", time: 500});
                     // po.gotoScene(mainScene, {effect: "slideRight", time: 500});
                 });
             });
@@ -29,6 +29,8 @@
               var img1 = new scene.Image("images/ch1.png");
               img1.x = 300;
               img1.y=400;
+              //img1.tint = 0xff0000;
+              //img1.mask = new scene.Image("images/rect.png");
               scene.onMouse(function(event){
                 // console.log(event);
                 if (event.action == "moved" && event.isLeftDown) {
@@ -47,7 +49,7 @@
             txt.y = 100;
 
             new scene.Timer(2000, function() {
-               scene.changeTo(scene1, {effect: "slideRight", time: 500});
+               scene.changeTo(scene1, {time:500, effect:"slideDown"});
                 // po.gotoScene(mainScene, {effect: "slideRight", time: 500});
             });
 

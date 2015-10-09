@@ -739,14 +739,42 @@ PIXION.Scene = function (execFunc) {
                         prevScene.container.x -= step;//current scene
                         return onCompleteSceneTransition;
                     }, totalIter);
-                }
-                   else if (opt.effect == "slideRight") {
+                } else if (opt.effect == "slideRight") {
                         sceneToGo.container.x = -PIXION.env.width;
                         var totalIter = opt.time / PIXION.env.frameTime;
                         var step = PIXION.env.width / totalIter;
                         new scene.Timer(PIXION.env.frameTime, function () {
                             sceneToGo.container.x += step;
                             prevScene.container.x += step;
+                            return onCompleteSceneTransition;
+                        }, totalIter);
+
+                } else if (opt.effect == "slideDown") {
+                        sceneToGo.container.y = -PIXION.env.height;
+                        var totalIter = opt.time / PIXION.env.frameTime;
+                        var step = PIXION.env.height / totalIter;
+                        new scene.Timer(PIXION.env.frameTime, function () {
+                            sceneToGo.container.y += step;
+                            prevScene.container.y += step;
+                            return onCompleteSceneTransition;
+                        }, totalIter);
+                } else if (opt.effect == "slideUp") {
+                        sceneToGo.container.y = PIXION.env.height;
+                        var totalIter = opt.time / PIXION.env.frameTime;
+                        var step = PIXION.env.height / totalIter;
+                        new scene.Timer(PIXION.env.frameTime, function () {
+                            sceneToGo.container.y -= step;
+                            prevScene.container.y -= step;
+                            return onCompleteSceneTransition;
+                        }, totalIter);
+
+                } else if (opt.effect == "fadeIn") {
+                        sceneToGo.container.alpha = 0;
+                        var totalIter = opt.time / PIXION.env.frameTime;
+                        var step = 1.0/ totalIter;
+                        new scene.Timer(PIXION.env.frameTime, function () {
+                            sceneToGo.container.alpha += step;
+                            prevScene.container.alpha -= step;
                             return onCompleteSceneTransition;
                         }, totalIter);
 
