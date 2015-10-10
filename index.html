@@ -26,36 +26,55 @@
             });
 
             var sceneMain = (new PIXION.Scene(function(scene) {
-              var img1 = new scene.Image("images/ch1.png");
-              img1.x = 300;
-              img1.y=400;
-              //img1.tint = 0xff0000;
-              //img1.mask = new scene.Image("images/rect.png");
-              scene.onMouse(function(event){
-                // console.log(event);
-                if (event.action == "moved" && event.isLeftDown) {
-                  img1.x += event.dx;
-                  img1.y += event.dy;
-                }
-              });
-             var sheet1 = new scene.ImageSheet("images/cat.png",
-                                            {width: 512, height: 256, numFrames: 8});
-             var ani1 = new scene.Sprite(sheet1, {time:1000, layer:2});
-                 ani1.x = 300;
-                 ani1.y = 400;
+              var rect1 = new scene.Rect(300,300, {x:100, y:100});
 
-            var txt = new scene.Text("SCENE 1");
-            txt.x = 300;
-            txt.y = 100;
+              // new scene.Timer(1000, function(){
+              //   rect1.lineWidth = 50;
+              //   rect1.lineColor = 0xff0000;
+              //   rect1.fillColor = 0x0000ff;
+              // });
 
-            scene.onFrame(function(cnt) {
-              console.log("frame:"+cnt);
-            });
+              // new scene.Timer(2000, function(){
+              //   rect1.width = 200;
+              //   rect1.lineColor = 0xff0000;
+              //   rect1.fillColor = 0x0000ff;
+              // });
 
-            new scene.Timer(2000, function() {
-               scene.changeTo(scene1, {time:500, effect:"slideDown"});
-                // po.gotoScene(mainScene, {effect: "slideRight", time: 500});
-            });
+              var circ1 = new scene.Circle(200);
+              //circ1.x = 200;
+              //circ1.y = 200;
+            //   var img1 = new scene.Image("images/ch1.png");
+            //   img1.x = 300;
+            //   img1.y=400;
+            //   //img1.tint = 0xff0000;
+            //   //img1.mask = new scene.Image("images/rect.png");
+            //   scene.onMouse(function(event){
+            //     // console.log(event);
+            //     if (event.action == "moved" && event.isLeftDown) {
+            //       img1.x += event.dx;
+            //       img1.y += event.dy;
+            //     }
+            //   });
+            //  var sheet1 = new scene.ImageSheet("images/cat.png",
+            //                                 {width: 512, height: 256, numFrames: 8});
+            //  var ani1 = new scene.Sprite(sheet1, {time:1000, layer:2});
+            //      ani1.x = 300;
+            //      ani1.y = 400;
+            //
+            // var txt = new scene.Text("SCENE 1");
+            // txt.x = 300;
+            // txt.y = 100;
+            //
+            // scene.onFrame( function(count) {
+            //   //console.log("frame:"+cnt);
+            //   rect1.setScale( 1+0.1*Math.sin(count*0.1) );
+            //   rect1.rotation += 0.02;
+            // });
+            //
+            // new scene.Timer(2000, function() {
+            //    scene.changeTo(scene1, {time:500, effect:"slideDown"});
+            //     // po.gotoScene(mainScene, {effect: "slideRight", time: 500});
+            // });
 
             })).show();
             //(new PIXION.PL()).gotoScene('main');

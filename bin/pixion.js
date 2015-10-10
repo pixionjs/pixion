@@ -587,6 +587,121 @@ PIXION.Scene = function (execFunc) {
                 this.pixiText.text = val;
             }
     });
+    //
+    // ==================================================================
+    // Image object inherits PIXI.Sprite object.
+    // layer: layer number to add the generated image
+    // ==================================================================
+    this.Rect = function (w, h, params) {
+        PIXION.DispObj.call(this, scene, params);
+        this._w = w;
+        this._h = h;
+        this._lw = 1;
+        this._lc = 0xffffff; // line color
+        this._fc = 0x000000; // fill color
+        this.pixiObj = new PIXI.Graphics();
+        this.addChild(this.pixiObj);
+        this._redraw();
+    };
+    this.Rect.prototype = Object.create(PIXION.DispObj.prototype);
+    this.Rect.prototype.constructor = this.Rect;
+    this.Rect.prototype.remove = function() {
+        this.removeChild(this.pixiObj).destroy();
+        if (this.parent) this.parent.removeChild(this).destroy();
+    };
+    this.Rect.prototype._redraw = function() {
+      this.pixiObj.clear();
+      this.pixiObj.beginFill(this._fc, 1);
+      this.pixiObj.lineStyle(this._lw, this._lc, 1);
+      this.pixiObj.drawRect(-this._w/2, -this._h/2, this._w, this._h);//anchor at the center
+      // this.pixiObj.drawRect(0, 0, this._w, this._h);//anchor at the center
+      this.pixiObj.endFill();
+    };
+    Object.defineProperty(this.Rect.prototype, "width", {
+            get: function () {return this._w;},
+            set: function (val) {
+              this._w = val;
+              this._redraw();
+            }
+    });
+    Object.defineProperty(this.Rect.prototype, "lineWidth", {
+            get: function () {return this._lw;},
+            set: function (val) {
+              this._lw = val;
+              this._redraw();
+            }
+    });
+    Object.defineProperty(this.Rect.prototype, "lineColor", {
+            get: function () {return this._lc;},
+            set: function (val) {
+              this._lc = val;
+              this._redraw();
+            }
+    });
+    Object.defineProperty(this.Rect.prototype, "fillColor", {
+            get: function () {return this._fc;},
+            set: function (val) {
+              this._fc = val;
+              this._redraw();
+            }
+    });
+    //
+    // ==================================================================
+    // Image object inherits PIXI.Sprite object.
+    // layer: layer number to add the generated image
+    // ==================================================================
+    this.Circle = function (r, params) {
+        PIXION.DispObj.call(this, scene, params);
+        this._r = r; // radius
+        this._lw = 1; // line width
+        this._lc = 0xffffff; // line color
+        this._fc = 0x000000; // fill color
+        this._fa = 0; // fill alpha
+        this.pixiObj = new PIXI.Graphics();
+        this.addChild(this.pixiObj);
+        this._redraw();
+    };
+    this.Circle.prototype = Object.create(PIXION.DispObj.prototype);
+    this.Circle.prototype.constructor = this.Circle;
+    this.Circle.prototype.remove = function() {
+        this.removeChild(this.pixiObj).destroy();
+        if (this.parent) this.parent.removeChild(this).destroy();
+    };
+    this.Circle.prototype._redraw = function() {
+      this.pixiObj.clear();
+      this.pixiObj.beginFill(this._fc, this._fa);
+      this.pixiObj.lineStyle(this._lw, this._lc, 1);
+      this.pixiObj.drawCircle(0,0, this._r);//anchor at the center
+      this.pixiObj.endFill();
+    };
+    Object.defineProperty(this.Circle.prototype, "radius", {
+            get: function () {return this._r;},
+            set: function (val) {
+              this._r = val;
+              this._redraw();
+            }
+    });
+    Object.defineProperty(this.Circle.prototype, "lineWidth", {
+            get: function () {return this._lw;},
+            set: function (val) {
+              this._lw = val;
+              this._redraw();
+            }
+    });
+    Object.defineProperty(this.Circle.prototype, "lineColor", {
+            get: function () {return this._lc;},
+            set: function (val) {
+              this._lc = val;
+              this._redraw();
+            }
+    });
+    Object.defineProperty(this.Circle.prototype, "fillColor", {
+            get: function () {return this._fc;},
+            set: function (val) {
+              this._fc = val;
+              this._redraw();
+            }
+    });
     // ==================================================================
     // generate array of PIXI.Texture of each frames from image file
     // opt={width:n, height:n[, numFrames:n]}
