@@ -306,8 +306,58 @@ PIXION.DispObj.prototype.moveResume = function () {
 PIXION.DispObj.prototype.moveCancel = function () {
 
 };
+// ==================================================================
+// Image object inherits PIXI.Sprite object.
+// layer: layer number to add the generated image
+// ==================================================================
+PIXION.Graph = function (scene, params) {
+    PIXION.DispObj.call(this, scene, params);
+    this._lineWidth = 1;
+    this._lineColor = 0xffffff;
+    this._fillColor = 0x000000;
+    this.pixiGraphics = new PIXI.Graphics();
+    this.addChild(this.pixiGraphics);
+    this._redraw();
+};
+PIXION.Graph.prototype = Object.create(PIXION.DispObj.prototype);
+PIXION.Graph.prototype.constructor = PIXION.Graph;
+PIXION.Graph.prototype.remove = function() {
+    this.removeChild(this.pixiGraphics).destroy();
+    if (this.parent) this.parent.removeChild(this).destroy();
+};
+PIXION.Graph.prototype._redraw = function() {
+  // console.log("PIXION.env.bgcolor:"+PIXION.env.bgcolor);
+  var fillAlpha = (this._fillColor == PIXION.env.bgcolor)? 0:1;
+  this.pixiGraphics.clear();
+  this.pixiGraphics.beginFill(this._fillColor, fillAlpha);
+  this.pixiGraphics.lineStyle(this._lineWidth, this._lineColor, 1);
+  this._draw();
+  this.pixiGraphics.endFill();
+};
+Object.defineProperty(PIXION.Graph.prototype, "lineWidth", {
+        get: function () {return this._lineWidth;},
+        set: function (val) {
+          this._lineWidth = val;
+          this._redraw();
+        }
+});
+Object.defineProperty(PIXION.Graph.prototype, "lineColor", {
+        get: function () {return this._lineColor;},
+        set: function (val) {
+          this._lineColor = val;
+          this._redraw();
+        }
+});
+Object.defineProperty(PIXION.Graph.prototype, "fillColor", {
+        get: function () {return this._fillColor;},
+        set: function (val) {
+          this._fillColor = val;
+          this._redraw();
+        }
+});
 //===================================================================
 // params = {fps:n, bgcolor:0xnnnnnn, isDebug:t/f}
+//===================================================================
 PIXION.begin = function(width, height, params) {
     var bgColor = 0x000000; // default: black
     var fps = 60; // default : 60
@@ -344,118 +394,6 @@ PIXION.begin = function(width, height, params) {
 //
 PIXION.beginWithConfig = function() {
 };
-
-// ==================================================================
-// object that delivers to scene file wrapping function
-//
-// ==================================================================
-// PIXION.PL = function (scene) {
-//     var thisPL = this;
-//     this.scene = scene;
-//     //
-//     this.log = function (str) {
-//         PIXION.log(str);
-//     };
-//     //
-//     //==============================================================
-//     // pl.require : library loader
-//     //
-//     //==============================================================
-//     this.require = function(fileName) {
-//         var functionName = fileName + PIXION.__fileSuffix__;
-//         PIXION.log("pl.require:[" + functionName + "]");
-//         return window[functionName](this);
-//     };
-
-    // ==================================================================
-    // stage.goto()
-    // opt:
-    //
-    // ==================================================================
-//     this.gotoScene = function (sceneName, opt) {
-//         // load scene handler and init scene.
-//         if ( typeof sceneName == "object") { // in case of PIXION.Scene object
-//             if (sceneName instanceof PIXION.Scene)
-//                 var sceneToGo = sceneName;
-//             else
-//                 PIXION.stop(sceneName + " is not a PIXION.Scene object");
-//         } else if (typeof sceneName == "string") {//in case of file name
-// //            console.log("scene file");
-//             var sceneToGo = new PIXION.Scene(PIXION.userFiles[sceneName]);
-//         }
-//         sceneToGo.init();
-//         //var sceneToGo = new PIXION.Scene(sceneName);
-//         //var po = new PIXION.PL(sceneToGo);
-//
-// //        // if no scene preloads, load all the resources in the project
-// //        if (PIXION._isEmpty(sceneToGo.preloads)) {
-// //            if (!PIXION.env.isAllRscLoadedBefore) {
-// //                PIXION.log('load all the rscs' + PIXION.env.allTheResources);
-// //                PIXION._addToLoader(PIXION.env.allTheResources).load(runAfterLoad);
-// //                PIXION.env.isAllRscLoadedBefore = true;
-// //            } else {
-// //                PIXION.log('All the resources has been loaded before.')
-// //                runAfterLoad();
-// //            }
-// //        } else {
-// //            PIXION.log('load scene rscs');
-// //            PIXION._addToLoader(sceneToGo.preloads).load(runAfterLoad);
-// //        }
-//
-//         runAfterLoad();
-//
-//         function runAfterLoad() {
-//
-//             function onCompleteSceneTransition() {
-// //                PIXION.env.stage.removeChild(scene);
-//                 scene.destroy();
-//                 sceneToGo.container.x = 0;
-//                 sceneToGo.container.y = 0;
-//                 sceneToGo.alpha = 1.0;
-//                 sceneToGo.rotation = 0;
-//                 // PIXION.log("slide complete")
-//             }
-//
-// //            PIXION.log("runAfterLoad:" + sceneName);
-//             var prevScene = scene;
-//
-//             sceneToGo.show();// sceneToGo.registerAndRun();
-//
-//             if (opt == undefined) {
-//                 if (prevScene != undefined)
-//                     prevScene.destroy();
-//                 //PIXION.log("slide changed");
-//                 return;
-//
-//             } else {
-//                 if (opt.effect == "slideLeft") {
-//                     sceneToGo.container.x = PIXION.env.width;
-//
-//                     var totalIter = opt.time / PIXION.env.frameTime;
-//                     var step = PIXION.env.width / totalIter;
-//
-//                     //PIXION.newTimer(PIXION.env.frameTime, function () {
-//                     new thisPL.Timer(PIXION.env.frameTime, function () {
-//                         sceneToGo.container.x -= step;
-//                         prevScene.container.x -= step;//current scene
-//                         return onCompleteSceneTransition;
-//                     }, totalIter);
-//                 } else if (opt.effect == "slideRight") {
-//                     sceneToGo.container.x = -PIXION.env.width;
-//                     var totalIter = opt.time / PIXION.env.frameTime;
-//                     var step = PIXION.env.width / totalIter;
-//                     new thisPL.Timer(PIXION.env.frameTime, function () {
-//                         sceneToGo.container.x += step;
-//                         prevScene.container.x += step;
-//                         return onCompleteSceneTransition;
-//                     }, totalIter);
-//
-//                 }
-//             }
-//         } // function runAfterLoad()
-//     };
-//};
-// //
 // ==================================================================
 // opt = {width:N, height:M, time:ms, numFrames=nf,}
 //
@@ -587,118 +525,41 @@ PIXION.Scene = function (execFunc) {
                 this.pixiText.text = val;
             }
     });
-    //
     // ==================================================================
     // Image object inherits PIXI.Sprite object.
     // layer: layer number to add the generated image
     // ==================================================================
     this.Rect = function (w, h, params) {
-        PIXION.DispObj.call(this, scene, params);
-        this._w = w;
-        this._h = h;
-        this._lw = 1;
-        this._lc = 0xffffff; // line color
-        this._fc = 0x000000; // fill color
-        this.pixiObj = new PIXI.Graphics();
-        this.addChild(this.pixiObj);
-        this._redraw();
+        this._rectWidth = w;
+        this._rectHeight = h;
+        PIXION.Graph.call(this, scene, params);
     };
-    this.Rect.prototype = Object.create(PIXION.DispObj.prototype);
+    this.Rect.prototype = Object.create(PIXION.Graph.prototype);
     this.Rect.prototype.constructor = this.Rect;
-    this.Rect.prototype.remove = function() {
-        this.removeChild(this.pixiObj).destroy();
-        if (this.parent) this.parent.removeChild(this).destroy();
+    // this._draw() called inside the this._redraw() function
+    this.Rect.prototype._draw = function() {
+      this.pixiGraphics.drawRect(-this._rectWidth/2, -this._rectHeight/2,
+         this._rectWidth, this._rectHeight);//anchor at the center
     };
-    this.Rect.prototype._redraw = function() {
-      this.pixiObj.clear();
-      this.pixiObj.beginFill(this._fc, 1);
-      this.pixiObj.lineStyle(this._lw, this._lc, 1);
-      this.pixiObj.drawRect(-this._w/2, -this._h/2, this._w, this._h);//anchor at the center
-      // this.pixiObj.drawRect(0, 0, this._w, this._h);//anchor at the center
-      this.pixiObj.endFill();
-    };
-    Object.defineProperty(this.Rect.prototype, "width", {
-            get: function () {return this._w;},
-            set: function (val) {
-              this._w = val;
-              this._redraw();
-            }
-    });
-    Object.defineProperty(this.Rect.prototype, "lineWidth", {
-            get: function () {return this._lw;},
-            set: function (val) {
-              this._lw = val;
-              this._redraw();
-            }
-    });
-    Object.defineProperty(this.Rect.prototype, "lineColor", {
-            get: function () {return this._lc;},
-            set: function (val) {
-              this._lc = val;
-              this._redraw();
-            }
-    });
-    Object.defineProperty(this.Rect.prototype, "fillColor", {
-            get: function () {return this._fc;},
-            set: function (val) {
-              this._fc = val;
-              this._redraw();
-            }
-    });
-    //
     // ==================================================================
     // Image object inherits PIXI.Sprite object.
     // layer: layer number to add the generated image
     // ==================================================================
     this.Circle = function (r, params) {
-        PIXION.DispObj.call(this, scene, params);
-        this._r = r; // radius
-        this._lw = 1; // line width
-        this._lc = 0xffffff; // line color
-        this._fc = 0x000000; // fill color
-        this._fa = 0; // fill alpha
-        this.pixiObj = new PIXI.Graphics();
-        this.addChild(this.pixiObj);
-        this._redraw();
+        this._radius = r; //<= this must be here before PIXION.Graph.call();
+        PIXION.Graph.call(this, scene, params);
     };
-    this.Circle.prototype = Object.create(PIXION.DispObj.prototype);
+    this.Circle.prototype = Object.create(PIXION.Graph.prototype);
     this.Circle.prototype.constructor = this.Circle;
-    this.Circle.prototype.remove = function() {
-        this.removeChild(this.pixiObj).destroy();
-        if (this.parent) this.parent.removeChild(this).destroy();
-    };
-    this.Circle.prototype._redraw = function() {
-      this.pixiObj.clear();
-      this.pixiObj.beginFill(this._fc, this._fa);
-      this.pixiObj.lineStyle(this._lw, this._lc, 1);
-      this.pixiObj.drawCircle(0,0, this._r);//anchor at the center
-      this.pixiObj.endFill();
+    // this._draw() called inside the this._redraw() function
+    this.Circle.prototype._draw = function() {
+      // console.log("this._r:"+this._radius);
+      this.pixiGraphics.drawCircle(0,0, this._radius);//anchor at the center
     };
     Object.defineProperty(this.Circle.prototype, "radius", {
-            get: function () {return this._r;},
+            get: function () {return this._radius;},
             set: function (val) {
-              this._r = val;
-              this._redraw();
-            }
-    });
-    Object.defineProperty(this.Circle.prototype, "lineWidth", {
-            get: function () {return this._lw;},
-            set: function (val) {
-              this._lw = val;
-              this._redraw();
-            }
-    });
-    Object.defineProperty(this.Circle.prototype, "lineColor", {
-            get: function () {return this._lc;},
-            set: function (val) {
-              this._lc = val;
-              this._redraw();
-            }
-    });
-    Object.defineProperty(this.Circle.prototype, "fillColor", {
-            get: function () {return this._fc;},
-            set: function (val) {
-              this._fc = val;
+              this._radius = val;
               this._redraw();
             }
     });
