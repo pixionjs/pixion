@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="ko">
     <head>
       <meta charset="UTF-8">
+      <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.7/pixi.min.js" charset="UTF-8"></script> -->
       <script type="text/javascript" src="bin/pixion.js" charset="UTF-8"></script>
       <script type="text/javascript" src="config.js" charset="UTF-8"></script>
       <script type="text/javascript" src="main.js" charset="UTF-8"></script>
@@ -28,6 +28,20 @@
             var sceneMain = (new PIXION.Scene(function(scene) {
               var rect1 = new scene.Rect(300,300, {x:100, y:100});
 
+              var lines = new scene.Lines(0,0,100,100);
+              lines.lineTo(100,150);
+              lines.lineTo(200,300);
+              lines.addLine(500,500,550,600);
+              lines.lineTo(650,650);
+              lines.lineWidth = 10;
+
+              scene.onMouse(function(params){
+                if (params.action == "moved" && params.isLeftDown){
+                  lines.x += params.dx;
+                  lines.y += params.dy;
+                }
+
+              });
               // new scene.Timer(1000, function(){
               //   rect1.lineWidth = 50;
               //   rect1.lineColor = 0xff0000;

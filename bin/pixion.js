@@ -38,6 +38,14 @@ Object.defineProperty(PIXI.DisplayObject.prototype, "isVisible", {
             this.visible = val;
         }
     });
+// Object.defineProperty(PIXI.DisplayObject.prototype, "scale", {
+//     get: function () {
+//         return this.scale;
+//     },
+//     set: function (val) { //change this image's layer
+//       this.scale.x = this.scale.y = val;
+//     }
+// });
 PIXI.DisplayObject.prototype.setScale = function(val) {
     this.scale.x = this.scale.y = val;
 };
@@ -187,8 +195,6 @@ PIXION.DispObj = function (scene, params) {
         this.x = params.x || 0;
         this.y = params.y || 0;
     }
-//    console.log(this.name+" id:"+this.__cntnr__.children[this.__layer__].children.indexOf(this));
-//    console.log("layer.children.len:"+this.__cntnr__.children[this.__layer__].children.length);
 };
 PIXION.DispObj.prototype = Object.create(PIXI.Sprite.prototype);
 PIXION.DispObj.prototype.constructor = PIXION.DispObj;
@@ -530,6 +536,8 @@ PIXION.Scene = function (execFunc) {
     // layer: layer number to add the generated image
     // ==================================================================
     this.Rect = function (w, h, params) {
+        // _width and _height are memebers of PIXI.Graphics.
+        // thus, those are not to be used.
         this._rectWidth = w;
         this._rectHeight = h;
         PIXION.Graph.call(this, scene, params);
@@ -538,9 +546,26 @@ PIXION.Scene = function (execFunc) {
     this.Rect.prototype.constructor = this.Rect;
     // this._draw() called inside the this._redraw() function
     this.Rect.prototype._draw = function() {
-      this.pixiGraphics.drawRect(-this._rectWidth/2, -this._rectHeight/2,
-         this._rectWidth, this._rectHeight);//anchor at the center
+      this.pixiGraphics.drawRect(
+        -this._rectWidth/2,
+        -this._rectHeight/2,
+         this._rectWidth,
+         this._rectHeight);//anchor at the center
     };
+    Object.defineProperty(this.Rect.prototype, "width", {
+            get: function () {return this._rectWidth;},
+            set: function (val) {
+              this._rectWidth = val;
+              this._redraw();
+            }
+    });
+    Object.defineProperty(this.Rect.prototype, "height", {
+            get: function () {return this._rectHeight;},
+            set: function (val) {
+              this._rectHeight = val;
+              this._redraw();
+            }
+    });
     // ==================================================================
     // Image object inherits PIXI.Sprite object.
     // layer: layer number to add the generated image
@@ -563,6 +588,39 @@ PIXION.Scene = function (execFunc) {
               this._redraw();
             }
     });
+    // ==================================================================
+    // Image object inherits PIXI.Sprite object.
+    // layer: layer number to add the generated image
+    // ==================================================================
+    this.Lines = function (x1,y1,x2,y2, params) {
+        this._lines = [];
+        this._lines.push([x1, y1, x2, y2]);
+        this._endX = x2;
+        this._endY = y2;
+        PIXION.Graph.call(this, scene, params);
+    };
+    this.Lines.prototype = Object.create(PIXION.Graph.prototype);
+    this.Lines.prototype.constructor = this.Lines;
+    // this._draw() called inside the this._redraw() function
+    this.Lines.prototype._draw = function() {
+      var pg = this.pixiGraphics;
+      this._lines.forEach(function(ele){
+          pg.moveTo(ele[0],ele[1]);
+          pg.lineTo(ele[2],ele[3]);
+      });
+    };
+    this.Lines.prototype.addLine = function(x1, y1, x2, y2) {
+      this._lines.push([x1,y1,x2,y2]);
+      this._endX = x2;
+      this._endY = y2;
+      this._redraw();
+    };
+    this.Lines.prototype.lineTo = function(x2, y2) {
+      this._lines.push([this._endX, this._endY, x2, y2]);
+      this._endX = x2;
+      this._endY = y2;
+      this._redraw();
+    };
     // ==================================================================
     // generate array of PIXI.Texture of each frames from image file
     // opt={width:n, height:n[, numFrames:n]}
