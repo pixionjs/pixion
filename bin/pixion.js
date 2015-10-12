@@ -108,7 +108,10 @@ PIXI.DisplayObject.prototype.onMouse = function(handler) {
                 handler(getEvent(md, "moved"));
         });
     };
-
+//
+// PIXI.DisplayObject.prototype._getPDO = function() {
+//   return this;
+// }
 //==============================================================
 /**
 *    PIXION Object
@@ -226,11 +229,7 @@ Object.defineProperty(PIXION.DispObj.prototype, "layer", {
             }
         }
     });
-//
-//PIXION.DispObj.prototype.setScale = function(val) {
-//    this.scaleX = this.scaleY = val;
-//};
-//
+    //
 PIXION.DispObj.prototype.addChild = function(child) {
     if(child.parent) child.parent.removeChild(child);
     PIXI.Sprite.prototype.addChild.call(this, child);
