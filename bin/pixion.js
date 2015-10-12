@@ -668,7 +668,7 @@ PIXION.Scene = function (execFunc) {
         function createSprite() {
             var start = seq.start || 0;
             var count = seq.count || (imageSheet.length - start);
-            PIXION.log("s:"+start+", c:"+count);
+            // PIXION.log("s:"+start+", c:"+count);
             for(var idFrame=start; idFrame<start+count; idFrame++) {
                 thisSprite._frameSeq.push(idFrame);
                 if(idFrame >= imageSheet.length)
