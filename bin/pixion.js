@@ -478,7 +478,7 @@ PIXION.Scene = function (execFunc) {
     // create image from image sheet
     // -----------------------------------------------------------------
     this.Image.fromImageSheet = function (imageSheet, frame, params) {
-        var image = new PIXION.DispObj(scene, params, thisPL);
+        var image = new PIXION.DispObj(scene, params);
         // call createSprite() after imageSheet loaded fully.
         PIXION._callBackAfterImageFramesAreStored(imageSheet, function(){
             image.texture = imageSheet[frame];
