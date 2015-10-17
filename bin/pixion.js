@@ -320,6 +320,12 @@ PIXION.Graph = function (scene, params) {
     this._lineWidth = 1;
     this._lineColor = 0xffffff;
     this._fillColor = 0x000000;
+    if (params != undefined) {
+      if (params.lineWidth != undefined) this._lineWidth = params.lineWidth;
+      if (params.lineColor != undefined) this._lineColor = params.lineColor;
+      if (params.fillColor != undefined) this._fillColor = params.fillColor;
+    }
+
     this.pixiGraphics = new PIXI.Graphics();
     this.addChild(this.pixiGraphics);
     this._redraw();
