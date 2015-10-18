@@ -639,9 +639,13 @@ PIXION.Scene = function (execFunc) {
         function storeFrame() {
             var texture = PIXI.Texture.fromImage(filename, false);
             var x = 0, y = 0;
-            var numFrames = opt.numFrames;
-            for (var fn = 0; fn < numFrames; fn++) {
+            var numFrames = 0;
+            var frameNumber =0;
+            while (y < texture.height) {
                 thisIS.push(new PIXI.Texture(texture, new PIXI.Rectangle(x, y, opt.width, opt.height)));
+                numFrames++;
+                // if speicifed number of images are loaded, exit.
+                if (opt.numFrames != undefined && opt.numFrames == numFrames) break;
                 //update x and y to the next frame
                 if (x + opt.width < texture.width) {
                     x += opt.width;
@@ -651,7 +655,7 @@ PIXION.Scene = function (execFunc) {
                 }
             }
             thisIS.isLoadComplete = true;
-//            PIXION.log("imgsht load completed.");
+           console.log("imgsht.length:"+thisIS.length);
         }
     };
     this.ImageSheet.prototype = Object.create(Array.prototype); //(2) to inherit PIXI.Sprite methods
